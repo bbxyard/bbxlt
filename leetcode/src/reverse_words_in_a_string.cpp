@@ -29,9 +29,12 @@ public:
         if (s.empty())
             return;
 
-        ltrim(s, ' ');
+        trim(s, ' ');
         if (!s.empty())
-            reverse_words(&s.at(0));
+        {
+            int len = reverse_words(&s.at(0));
+            s = s.substr(0, len);
+        }
     }
 private:
     void ltrim(string& s, char ch)
@@ -70,7 +73,7 @@ private:
         }
     }
 
-    void reverse_words(char* sent)
+    int reverse_words(char* sent)
     {
         char* p = sent; // begin position
         char* q = sent; // end postion
@@ -80,15 +83,39 @@ private:
                 ;
             // here q == 0 or space
             reverse_words(p, q);
+            if (*q == 0)
+            {
+                break;
+            }
+            
             // skip space and to next
+            char* qn = ++q;
+            for (; *qn != 0 && *qn == ' '; ++qn)
+                ;
+            if (q != qn)
+                do_strmove(q, qn);
             p = q;
-            if (*p != 0)
-                ++ p;
         }
         // reverse whole sentence.
-        reverse_words(sent, p);
-    }    
+        int len = q - sent;
+        reverse_words(sent, q);
+        return len;
+    }
+    void do_memmove(char* p, char* q, int count)
+    {
+        while (count-- > 0)
+        {
+            *p++ = *q++;
+        }
+    }
+    void do_strmove(char* p, char* q)
+    {
+        while (*q != 0)
+            *p++ = *q++;
+        *p = 0;
+    }
 };
+
 
 /* 
  * ===  FUNCTION  ======================================================================
